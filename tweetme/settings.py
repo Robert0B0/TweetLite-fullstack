@@ -25,7 +25,7 @@ SECRET_KEY = 'vf*1a5sez@w*fcl6zx!5*%4=&u9(_a5-j0to=ny_*gfp4gd0_c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 LOGIN_URL = "/login"
 MAX_TWEET_LENGTH = 240
 TWEET_ACTION_OPTIONS = ["like", "unlike", "retweet"]
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # third-party
     'rest_framework',
+    'corsheaders',
     # internal
     'tweets',
 ]
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -124,17 +126,32 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static-root")
+
 DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.JSONRenderer',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True  # any website has acces to the api
+CORS_URLS_REGEX = r'^/api/.*$'
+
+DEFAULT_AUTHENTICATION_CLASSES = [
+    'rest_framework.authentication.SessionAuthentication'
 ]
 
 if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
         'rest_framework.renderers.BrowsableAPIRenderer', ]
+    DEFAULT_AUTHENTICATION_CLASSES += [
+        "tweetme.rest_api.dev.DevAuthentication"
+    ]
+
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework.authentication.SessionAuthentication'
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": DEFAULT_AUTHENTICATION_CLASSES,
     "DEFAULT_RENDERER_CLASSES": DEFAULT_RENDERER_CLASSES
 }

@@ -86,5 +86,5 @@ class TweetTestCase(TestCase):
         client = self.get_client()
         response = client.delete("/api/tweets/1/delete/")
         self.assertEqual(response.status_code, 404)
-        response = client.delete("/api/tweets/3/delete/")
-        self.assertEqual(response.status_code, 401)
+        response_incorrect_owner = client.delete("/api/tweets/3/delete/")
+        self.assertEqual( response_incorrect_owner.status_code, 401)
